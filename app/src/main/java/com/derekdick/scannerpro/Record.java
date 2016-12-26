@@ -1,6 +1,8 @@
 package com.derekdick.scannerpro;
 
-public class Record {
+import org.litepal.crud.DataSupport;
+
+public class Record extends DataSupport {
     private String time;
     private String type;
     private String content;

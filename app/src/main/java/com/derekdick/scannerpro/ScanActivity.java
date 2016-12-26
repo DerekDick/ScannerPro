@@ -1,7 +1,6 @@
 package com.derekdick.scannerpro;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,9 +20,9 @@ public class ScanActivity extends AppCompatActivity {
     private String ocrResult;
     int type;
     private static final String DECODED_CONTENT_KEY = "codedContent";
-    private static final String DECODED_BITMAP_KEY = "codedBitmap";
 
     private static final int REQUEST_CODE_SCAN = 0x0000;
+    //private static final int REQUEST_CODE_OCR = 0x0001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +33,7 @@ public class ScanActivity extends AppCompatActivity {
         initView();
 
         // For the Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_scan);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -65,6 +63,8 @@ public class ScanActivity extends AppCompatActivity {
     public void scanOCR(View view) {
         /*On click of the button scan OCR*/
         type = 3;
+        Intent intent = new Intent(ScanActivity.this, OCRActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_SCAN);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,10 +79,29 @@ public class ScanActivity extends AppCompatActivity {
             case android.R.id.home:
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
-                bundle.putString("content_return", barcodeResult);
+
+                switch (type) {
+                    case 1:
+                        bundle.putString("content_return", barcodeResult);
+
+                        break;
+
+                    case 2:
+                        bundle.putString("content_return", qrcodeResult);
+
+                        break;
+
+                    case 3:
+                        bundle.putString("content_return", ocrResult);
+
+                        break;
+
+                    default:
+                        break;
+                }
+
+                //bundle.putString("content_return", barcodeResult);
                 bundle.putInt("type_return", type);
-                //intent.putExtra("content_return", barcodeResult);
-                //intent.putExtra("type_return", type);
                 intent.putExtras(bundle);
                 setResult(RESULT_OK, intent);
                 finish();
@@ -101,10 +120,31 @@ public class ScanActivity extends AppCompatActivity {
         // 扫描二维码/条码回传
         if (requestCode == REQUEST_CODE_SCAN && resultCode == RESULT_OK) {
             if (data != null) {
-                String content = data.getStringExtra(DECODED_CONTENT_KEY);
-                //Bitmap bitmap = data.getParcelableExtra(DECODED_BITMAP_KEY);
-                barcodeResult = content;
-                qrcodeResult = content;
+                String content = "";
+
+                switch (type) {
+                    case 1:
+                        content = data.getStringExtra(DECODED_CONTENT_KEY);
+                        barcodeResult = content;
+
+                        break;
+
+                    case 2:
+                        content = data.getStringExtra(DECODED_CONTENT_KEY);
+                        qrcodeResult = content;
+
+                        break;
+
+                    case 3:
+                        content = data.getStringExtra("content_return");
+                        ocrResult = content;
+
+                        break;
+
+                    default:
+                        break;
+                }
+
                 resultTv.setText("解码结果： \n" + content);
             }
         }
@@ -114,10 +154,27 @@ public class ScanActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
-        bundle.putString("content_return", barcodeResult);
+
+        switch (type) {
+            case 1:
+                bundle.putString("content_return", barcodeResult);
+
+                break;
+
+            case 2:
+                bundle.putString("content_return", qrcodeResult);
+
+                break;
+
+            case 3:
+                bundle.putString("content_return", ocrResult);
+
+                break;
+
+            default:
+                break;
+        }
         bundle.putInt("type_return", type);
-        //intent.putExtra("content_return", barcodeResult);
-        //intent.putExtra("type_return", type);
         intent.putExtras(bundle);
         setResult(RESULT_OK, intent);
         finish();

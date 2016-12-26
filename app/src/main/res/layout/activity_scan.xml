@@ -5,21 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
+    <android.support.v7.widget.Toolbar android:id="@+id/toolbar_scan"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#69ABFF"
+        android:background="@color/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <Button android:id="@+id/button_barcode"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:text="扫描商品条形码"
-        android:textColor="#000050"
-        android:layout_margin="10dp"
-        android:onClick="scanBarcode" />
+        android:layout_weight="1.0">
+
+        <Button android:id="@+id/button_barcode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="扫描商品条形码"
+            android:textColor="#000050"
+            android:layout_margin="10dp"
+            android:background="#95D6FF"
+            android:onClick="scanBarcode" />
+    </LinearLayout>
 
     <Button android:id="@+id/button_QRCode"
         android:layout_width="match_parent"
@@ -28,6 +34,7 @@
         android:text="扫描二维码"
         android:textColor="#000050"
         android:layout_margin="10dp"
+        android:background="#95D6FF"
         android:onClick="scanQRCode" />
 
     <Button android:id="@+id/button_OCR"
@@ -37,6 +44,7 @@
         android:text="OCR光学字符识别"
         android:textColor="#000050"
         android:layout_margin="10dp"
+        android:background="#95D6FF"
         android:onClick="scanOCR" />
 
     <TextView android:id="@+id/text_result"

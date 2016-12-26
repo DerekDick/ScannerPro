@@ -1,12 +1,15 @@
 package com.derekdick.scannerpro;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.support.v4.widget.DrawerLayout;
@@ -81,26 +84,34 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // For the records list view
-        //initRecords();
         listView = (ListView) findViewById(R.id.list_view);
         adapter = new RecordAdapter(MainActivity.this, R.layout.record_item, recordList);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(MainActivity.this, "扫描结果：\n" + recordList.get(position).getContent(),
+                //        Toast.LENGTH_LONG).show();
+                if (view.getId() == R.id.image_view_delete) {
+                    recordList.remove(position);
+                    listView.setAdapter(adapter);
+                    Toast.makeText(MainActivity.this, "You delete a record.",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                else {
+                    Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                }
+            }
+        });
     }
 
-    /*private void initRecords() {
-        for (int i = 0; i < 10; i++) {
-            Record record_barcode = new Record("2016/12/20/01:32", "Barcode", "11111111", R.drawable.ic_barcode);
-            recordList.add(record_barcode);
-            Record record_qrcode = new Record("2016/12/20/01:34", "QR Code", "22222222", R.drawable.ic_qrcode);
-            recordList.add(record_qrcode);
-            Record record_ocr = new Record("2016/12/20/01:35", "OCR", "33333333", R.drawable.ic_ocr);
-            recordList.add(record_ocr);
-        }
-    }*/
-
     private void initViews() {
+        // Initialize the private views of this activity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -114,15 +125,25 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
+
                 break;
 
             case R.id.search:
                 Toast.makeText(this, "You clicked Search.", Toast.LENGTH_SHORT).show();
+
                 break;
 
             case R.id.settings:
                 Intent intent_settings = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent_settings);
+
+                break;
+
+            case R.id.about:
+                Intent intent_about = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent_about);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
                 break;
 
             default:
@@ -133,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fabOnClick(View view) {
+        /* On click of the floating action button */
         Intent intent = new Intent(MainActivity.this, ScanActivity.class);
         startActivityForResult(intent, 1);
     }
@@ -161,29 +183,55 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshListView(String result, int type) {
-        /*if (result.equals("")) {
-            Toast.makeText(this, "dereek", Toast.LENGTH_SHORT).show();/////////////////////////////
-            return;
-        }*/
+        // Add a new record into the recordList and refresh the ListView
+
         switch (type) {
             case 1:
                 Record record_barcode = new Record(getCurrentTime(), "Barcode", result, R.drawable.ic_barcode);
                 recordList.add(record_barcode);
                 listView.setAdapter(adapter);
+
                 break;
 
             case 2:
                 Record record_qrcode = new Record(getCurrentTime(), "Barcode", result, R.drawable.ic_qrcode);
                 recordList.add(record_qrcode);
                 listView.setAdapter(adapter);
+
                 break;
 
             case 3:
+                Record record_ocr = new Record(getCurrentTime(), "OCR", result, R.drawable.ic_ocr);
+                recordList.add(record_ocr);
+                listView.setAdapter(adapter);
 
                 break;
 
             default:
                 break;
         }
+    }
+
+    public void deleteRecord(View view) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle("警告");
+        alertDialog.setMessage("是否确认删除此条记录？");
+        alertDialog.setCancelable(true);
+        alertDialog.setPositiveButton("是", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this, "You deleted a record.",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        alertDialog.setNegativeButton("否", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this, "You cancelled a deletion.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        alertDialog.show();
     }
 }

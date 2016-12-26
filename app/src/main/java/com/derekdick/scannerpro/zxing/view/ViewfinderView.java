@@ -16,7 +16,6 @@
 
 package com.derekdick.scannerpro.zxing.view;
 
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
@@ -199,7 +198,7 @@ public final class ViewfinderView extends View {
 
         canvas.drawRect(frame, paint);
 
-        paint.setColor(Color.BLUE);
+        paint.setColor(getResources().getColor(R.color.colorPrimary));
         paint.setStyle(Paint.Style.FILL);
 
         int corWidth = 15;

@@ -30,4 +30,6 @@ dependencies {
     // Add Design Support library
     compile 'com.android.support:recyclerview-v7:25.0.1'
     compile files('libs/core-3.0.0.jar')
+
+    compile 'org.litepal.android:core:1.4.1'
 }
