@@ -1,8 +1,6 @@
 package com.derekdick.scannerpro;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -17,18 +15,20 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.view.GravityCompat;
 import android.support.design.widget.NavigationView;
 
-import java.util.ArrayList;
+import org.litepal.crud.DataSupport;
+import org.litepal.tablemanager.Connector;
+
 import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
 
 public class MainActivity extends AppCompatActivity {
-    private DrawerLayout mDrawerLayout;
+    private DrawerLayout drawerLayout;
     private Toolbar toolbar;
 
-    private List<Record> recordList = new ArrayList<Record>();
+    private List<Record> recordList = DataSupport.findAll(Record.class);
 
-    private RecordAdapter adapter;
+    private RecordAdapter recordAdapter;
     private ListView listView;
 
     @Override
@@ -58,21 +58,25 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_call:
                         Toast.makeText(MainActivity.this, "MenuItem Call clicked.",
                                 Toast.LENGTH_SHORT).show();
+
                         break;
 
                     case R.id.nav_friends:
                         Toast.makeText(MainActivity.this, "MenuItem Friends clicked.",
                                 Toast.LENGTH_SHORT).show();
+
                         break;
 
                     case R.id.nav_location:
                         Toast.makeText(MainActivity.this, "MenuItem Location clicked.",
                                 Toast.LENGTH_SHORT).show();
+
                         break;
 
                     case R.id.nav_mail:
                         Toast.makeText(MainActivity.this, "MenuItem Mail clicked.",
                                 Toast.LENGTH_SHORT).show();
+
                         break;
 
                     default:
@@ -85,32 +89,25 @@ public class MainActivity extends AppCompatActivity {
 
         // For the records list view
         listView = (ListView) findViewById(R.id.list_view);
-        adapter = new RecordAdapter(MainActivity.this, R.layout.record_item, recordList);
-        listView.setAdapter(adapter);
+        recordAdapter = new RecordAdapter(MainActivity.this, R.layout.record_item, recordList);
+        listView.setAdapter(recordAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(MainActivity.this, "扫描结果：\n" + recordList.get(position).getContent(),
-                //        Toast.LENGTH_LONG).show();
-                if (view.getId() == R.id.image_view_delete) {
-                    recordList.remove(position);
-                    listView.setAdapter(adapter);
-                    Toast.makeText(MainActivity.this, "You delete a record.",
-                            Toast.LENGTH_SHORT).show();
-                }
-
-                else {
-                    Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                }
+                Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                intent.putExtra("content", recordList.get(position).getContent());
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         });
+
+        // For the LitePal database
+        Connector.getDatabase();
     }
 
     private void initViews() {
         // Initialize the private views of this activity
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
     }
 
@@ -124,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START);
 
                 break;
 
@@ -183,55 +180,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshListView(String result, int type) {
-        // Add a new record into the recordList and refresh the ListView
-
+        // Add a new record into the recordList
         switch (type) {
             case 1:
-                Record record_barcode = new Record(getCurrentTime(), "Barcode", result, R.drawable.ic_barcode);
-                recordList.add(record_barcode);
-                listView.setAdapter(adapter);
+                Record record_barcode = new Record(getCurrentTime(), "Barcode", result,
+                        R.drawable.ic_barcode);
+                record_barcode.save();
 
                 break;
 
             case 2:
-                Record record_qrcode = new Record(getCurrentTime(), "Barcode", result, R.drawable.ic_qrcode);
-                recordList.add(record_qrcode);
-                listView.setAdapter(adapter);
+                Record record_qrcode = new Record(getCurrentTime(), "Barcode", result,
+                        R.drawable.ic_qrcode);
+                record_qrcode.save();
 
                 break;
 
             case 3:
-                Record record_ocr = new Record(getCurrentTime(), "OCR", result, R.drawable.ic_ocr);
-                recordList.add(record_ocr);
-                listView.setAdapter(adapter);
+                Record record_ocr = new Record(getCurrentTime(), "OCR", result,
+                        R.drawable.ic_ocr);
+                record_ocr.save();
 
                 break;
 
             default:
                 break;
         }
+
+        updateListView();
     }
 
-    public void deleteRecord(View view) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-        alertDialog.setTitle("警告");
-        alertDialog.setMessage("是否确认删除此条记录？");
-        alertDialog.setCancelable(true);
-        alertDialog.setPositiveButton("是", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(MainActivity.this, "You deleted a record.",
-                        Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        alertDialog.setNegativeButton("否", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(MainActivity.this, "You cancelled a deletion.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-        alertDialog.show();
+    public void updateListView() {
+        recordList = DataSupport.findAll(Record.class);
+        recordAdapter = new RecordAdapter(MainActivity.this, R.layout.record_item, recordList);
+        listView.setAdapter(recordAdapter);
     }
 }

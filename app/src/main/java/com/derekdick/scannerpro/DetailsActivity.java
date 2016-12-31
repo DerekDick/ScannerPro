@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -21,6 +22,11 @@ public class DetailsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        // Display the content of the scanning record
+        String content = getIntent().getStringExtra("content");
+        TextView textView = (TextView) findViewById(R.id.details_text_view_content);
+        textView.setText(content);
     }
 
     @Override
