@@ -47,21 +47,21 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     public void scanBarcode(View view) {
-        /*On click of the button scan barcode*/
+        /* On click of the button scan barcode */
         type = 1;
         Intent intent = new Intent(ScanActivity.this, CaptureActivity.class);
         startActivityForResult(intent, REQUEST_CODE_SCAN);
     }
 
     public void scanQRCode(View view) {
-        /*On click of the button scan QR Code*/
+        /* On click of the button scan QR Code */
         type = 2;
         Intent intent = new Intent(ScanActivity.this, CaptureActivity.class);
         startActivityForResult(intent, REQUEST_CODE_SCAN);
     }
 
     public void scanOCR(View view) {
-        /*On click of the button scan OCR*/
+        /* On click of the button scan OCR */
         type = 3;
         Intent intent = new Intent(ScanActivity.this, OCRActivity.class);
         startActivityForResult(intent, REQUEST_CODE_SCAN);
@@ -126,17 +126,23 @@ public class ScanActivity extends AppCompatActivity {
                     case 1:
                         content = data.getStringExtra(DECODED_CONTENT_KEY);
                         barcodeResult = content;
+                        qrcodeResult = "";
+                        ocrResult = "";
 
                         break;
 
                     case 2:
                         content = data.getStringExtra(DECODED_CONTENT_KEY);
+                        barcodeResult = "";
                         qrcodeResult = content;
+                        ocrResult = "";
 
                         break;
 
                     case 3:
                         content = data.getStringExtra("content_return");
+                        barcodeResult = "";
+                        qrcodeResult = "";
                         ocrResult = content;
 
                         break;
@@ -176,6 +182,34 @@ public class ScanActivity extends AppCompatActivity {
         }
         bundle.putInt("type_return", type);
         intent.putExtras(bundle);
+        switch (type) {
+            case 1:
+                if (barcodeResult == "") {
+                    setResult(RESULT_CANCELED, intent);
+                    finish();
+                }
+
+                break;
+
+            case 2:
+                if (qrcodeResult == "") {
+                    setResult(RESULT_CANCELED, intent);
+                    finish();
+                }
+
+                break;
+
+            case 3:
+                if (ocrResult == "") {
+                    setResult(RESULT_CANCELED, intent);
+                    finish();
+                }
+
+                break;
+
+            default:
+                break;
+        }
         setResult(RESULT_OK, intent);
         finish();
     }

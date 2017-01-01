@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        // Initialize the private views of this activity
+        /* Initialize the private views of this activity */
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
     }
@@ -174,13 +174,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getCurrentTime() {
+        /* Return the current time as a String */
         SimpleDateFormat formatter=  new SimpleDateFormat("yyyy/MM/dd/HH:mm:ss");
         Date currentDate = new Date(System.currentTimeMillis());
         return formatter.format(currentDate);
     }
 
     private void refreshListView(String result, int type) {
-        // Add a new record into the recordList
+        /* Add a new record into the recordList */
         switch (type) {
             case 1:
                 Record record_barcode = new Record(getCurrentTime(), "Barcode", result,
