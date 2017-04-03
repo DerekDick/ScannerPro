@@ -17,7 +17,6 @@ import java.util.List;
 
 public class RecordAdapter extends ArrayAdapter<Record> {
     private int resourceId;
-
     private Context mContext;
 
     public RecordAdapter(Context context, int itemViewResourceId, List<Record> records) {
@@ -63,7 +62,6 @@ public class RecordAdapter extends ArrayAdapter<Record> {
 
                         Toast.makeText(getContext(), "You deleted a record.",
                                 Toast.LENGTH_SHORT).show();
-
                     }
                 });
                 alertDialog.setNegativeButton("否", new DialogInterface.OnClickListener() {

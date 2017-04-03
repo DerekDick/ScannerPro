@@ -39,7 +39,7 @@
         <ImageView
             android:layout_marginLeft="10dp"
             android:layout_width="80dp"
-            android:layout_height="45dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:src="@drawable/ic_qrcode" />
 
@@ -60,7 +60,7 @@
         <ImageView
             android:layout_marginLeft="10dp"
             android:layout_width="80dp"
-            android:layout_height="45dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:src="@drawable/ic_ocr" />
 
